@@ -4,18 +4,23 @@ import { sslCheck } from './libs/ssl'
 async function runSSL() {
     const fsRead = fs.readFileSync('ssl.settings', 'utf8')
     const urls = fsRead.split('\n')
-        .map(url => url.trim())
-        .filter(url => url.length > 0)
-        .filter(url => !url.startsWith('#'))
-        .map(url => url.replace('https://', ''))
-        .map(url => (url.slice(-1) != "/") ? url : url.slice(0, -1))
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .filter(line => !line.startsWith('#'))
+        .map(line => line.replace('https://', ''))
+        .map(line => (line.slice(-1) != "/") ? line : line.slice(0, -1))
 
-    const mode = urls[0].split(':')[1].trim()
+    const mode = fsRead.split('\n')
+        .filter(line => line.startsWith('# MODE:'))[0]
+        .split(':')[1]
+
+    const logging = fsRead.split('\n')
+        .filter(line => line.startsWith('# LOGGING:'))[0]
+        .split(':')[1]
+
     if (mode != 'raw' && mode != 'parsed') throw new Error('Invalid mode')
 
-    urls.shift()
-
-    const res = await sslCheck(urls, mode)
+    const res = await sslCheck(urls, mode, (logging == 'true'))
     return (mode == 'raw') ? console.log(res) : console.table(res)
 }
 
