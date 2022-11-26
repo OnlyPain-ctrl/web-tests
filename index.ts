@@ -27,4 +27,11 @@ async function runSSL() {
     return (mode == 'json') ? console.log(res) : console.table(res)
 }
 
-runSSL()
+switch (process.argv[2]) {
+    case "ssl":
+        runSSL()
+        break
+
+    default:
+        throw new Error('Not a valid argument')
+}

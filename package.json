@@ -4,7 +4,7 @@
     "description": "useful tools for checking websites",
     "main": "index.js",
     "scripts": {
-        "ssl": "ts-node index.ts"
+        "ssl": "ts-node index.ts ssl"
     },
     "repository": {
         "type": "git",
