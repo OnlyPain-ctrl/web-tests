@@ -1,7 +1,43 @@
 import fs from 'fs'
 import sslChecker from "ssl-checker"
 
-export async function sslCheck(data: Array<string>, mode: "json" | "table" = 'json', logging = false) {
+/* exports */
+
+export async function runSSL() {
+    const conf = await getConfig()
+
+    if (conf.logging != 'true' && conf.logging != 'false') throw new Error('Invalid logging mode (true | false)')
+    if (conf.mode != 'json' && conf.mode != 'table') throw new Error('Invalid mode (json | table)')
+
+    const res = await sslCheck(conf.urls, conf.mode, (conf.logging == 'true'))
+    return (conf.mode == 'json') ? console.log(res) : console.table(res)
+}
+
+/* helpers */
+
+async function getConfig() {
+    const fsRead = fs.readFileSync('./settings/ssl.conf', 'utf8')
+    const urls = fsRead.split('\n')
+        .filter(line => line.length > 0)
+        .filter(line => !line.startsWith('#'))
+        .map(line => line.trim())
+        .map(line => line.replace('https://', ''))
+        .map(line => (line.slice(-1) != "/") ? line : line.slice(0, -1))
+
+    const mode = fsRead.split('\n')
+        .filter(line => line.startsWith('# MODE:'))[0]
+        .split(':')[1]
+        .trim()
+
+    const logging = fsRead.split('\n')
+        .filter(line => line.startsWith('# LOGGING:'))[0]
+        .split(':')[1]
+        .trim()
+
+    return { urls, mode, logging }
+}
+
+async function sslCheck(data: Array<string>, mode: "json" | "table" = 'json', logging = false) {
     type resType = Promise<{
         error: boolean
         sourceUrl: string
