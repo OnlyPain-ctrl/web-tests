@@ -29,13 +29,13 @@ async function getConfig() {
 
     const mode = fsRead
         .split('\n')
-        .filter((line) => line.startsWith('# MODE:'))[0]
+        .filter((line) => line.includes('MODE:'))[0]
         .split(':')[1]
         .trim()
 
     const logging = fsRead
         .split('\n')
-        .filter((line) => line.startsWith('# LOGGING:'))[0]
+        .filter((line) => line.includes('LOGGING:'))[0]
         .split(':')[1]
         .trim()
 
