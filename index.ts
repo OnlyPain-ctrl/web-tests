@@ -1,7 +1,7 @@
 import { runSSL } from './libs/ssl'
 
 switch (process.argv[2]) {
-    case "ssl":
+    case 'ssl':
         runSSL()
         break
 
