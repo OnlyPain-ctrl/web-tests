@@ -1,3 +1,4 @@
+import fs from 'fs'
 import sslChecker from "ssl-checker"
 
 export async function sslCheck(data: Array<string>, mode: "raw" | "parsed" = 'raw') {
@@ -19,9 +20,16 @@ export async function sslCheck(data: Array<string>, mode: "raw" | "parsed" = 'ra
             .catch(() => { return { sourceUrl: url, error: true } })
     })
 
-    if (mode == 'raw') await Promise.all(promise)
+    const res = await Promise.all(promise);
 
-    return (await Promise.all(promise)).sort((a, b) => {
+    /* TODO: valid json missing: "[]" */
+    const jsonRes = new Uint8Array(Buffer.from(JSON.stringify({ ...{ "timestamp": new Date() }, ...res }) + ",\n"))
+    if (!fs.existsSync("logs")) fs.mkdirSync("logs")
+    fs.appendFileSync('./logs/ssl.json', jsonRes)
+
+    if (mode == 'raw') return res
+
+    return res.sort((a, b) => {
         if (a.daysRemaining && b.daysRemaining) return b.daysRemaining - a.daysRemaining
         else return Number(a.error) - Number(b.error)
     }).map(obj => [obj.sourceUrl, obj.error, obj.valid, obj.daysRemaining])
