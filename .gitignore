@@ -13,8 +13,8 @@ node_modules
 dist-ssr
 *.local
 .env
-*.settings
-!templates/*
+settings/*.conf
+!settings/examples/*
 
 # Editor directories and files
 .vscode/*

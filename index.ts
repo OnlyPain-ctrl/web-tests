@@ -2,7 +2,7 @@ import fs from 'fs'
 import { sslCheck } from './libs/ssl'
 
 async function runSSL() {
-    const fsRead = fs.readFileSync('ssl.settings', 'utf8')
+    const fsRead = fs.readFileSync('./settings/ssl.conf', 'utf8')
     const urls = fsRead.split('\n')
         .map(line => line.trim())
         .filter(line => line.length > 0)
