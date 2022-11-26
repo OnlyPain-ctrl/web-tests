@@ -36,9 +36,16 @@ async function getConfig() {
 }
 
 async function crawlerCheck(urls: Array<string>, concurrency = 100) {
-    const folder = 'crawl_' + new Date().toISOString()
+    const date = new Date()
 
-    if (!fs.existsSync('logs' + folder)) fs.mkdirSync('logs/' + folder)
+    const day =
+        date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()
+    const time =
+        date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds()
+
+    const folder = './logs/crawl_' + day + '/time_' + time + '/'
+
+    fs.mkdirSync(folder, { recursive: true })
 
     urls.forEach(async (url) => {
         const linkChecker = new LinkChecker()
@@ -61,9 +68,8 @@ async function crawlerCheck(urls: Array<string>, concurrency = 100) {
                 .replaceAll('.', '-')
 
             const first = result.status?.toString()[0]
-            const statusPath =
-                './logs/' + folder + '/' + name + '_[' + first + 'xx].csv'
-            const path = './logs/' + folder + '/' + name + '_[full]' + '.csv'
+            const statusPath = folder + '/' + name + '_[' + first + 'xx].csv'
+            const path = folder + '/' + name + '_[full]' + '.csv'
 
             fs.appendFileSync(statusPath, fullU8)
             fs.appendFileSync(path, fullU8)
