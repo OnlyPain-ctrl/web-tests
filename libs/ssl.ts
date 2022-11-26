@@ -1,7 +1,7 @@
 import fs from 'fs'
 import sslChecker from "ssl-checker"
 
-export async function sslCheck(data: Array<string>, mode: "raw" | "parsed" = 'raw', logging = false) {
+export async function sslCheck(data: Array<string>, mode: "json" | "table" = 'json', logging = false) {
     type resType = Promise<{
         error: boolean
         sourceUrl: string
@@ -29,7 +29,7 @@ export async function sslCheck(data: Array<string>, mode: "raw" | "parsed" = 'ra
         fs.appendFileSync('./logs/ssl.json', jsonRes)
     }
 
-    if (mode == 'raw') return res
+    if (mode == 'json') return res
 
     return res.sort((a, b) => {
         if (a.daysRemaining && b.daysRemaining) return b.daysRemaining - a.daysRemaining
