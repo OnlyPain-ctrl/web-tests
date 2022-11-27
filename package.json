@@ -4,6 +4,9 @@
     "description": "useful tools for checking websites",
     "main": "index.ts",
     "type": "module",
+    "engines": {
+        "node": ">=16"
+    },
     "scripts": {
         "ssl": "ts-node index.ts ssl",
         "crawl": "ts-node index.ts crawl"
