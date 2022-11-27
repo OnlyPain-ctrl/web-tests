@@ -62,9 +62,11 @@ async function sslCheck(
     const promise: resType = urls.map(async (url) => {
         return await sslChecker(url, { method: 'GET', port: 443 })
             .then((obj) => {
+                console.log('[y]', url)
                 return { ...{ error: false, sourceUrl: url }, ...obj }
             })
             .catch(() => {
+                console.log('[n]', url)
                 return { sourceUrl: url, error: true }
             })
     })

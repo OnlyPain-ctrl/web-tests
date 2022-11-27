@@ -1,5 +1,5 @@
-import { runSSL } from './libs/ssl'
-import { runCrawler } from './libs/crawler'
+import { runSSL } from './src/ssl'
+import { runCrawler } from './src/crawler'
 
 switch (process.argv[2]) {
     case 'ssl':
