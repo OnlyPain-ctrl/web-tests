@@ -5,9 +5,11 @@ import { LinkChecker } from 'linkinator'
 
 export async function runCrawler() {
     const conf = await getConfig()
-    console.log(conf)
+    const res = await crawlerCheck(conf.urls, conf.concurrency)
 
-    crawlerCheck(conf.urls, conf.concurrency)
+    console.log('---')
+    console.log('urls checked: ' + res.urls.length)
+    console.log('log path: ' + res.path)
 }
 
 /* helpers */
@@ -47,7 +49,7 @@ async function crawlerCheck(urls: Array<string>, concurrency = 100) {
 
     fs.mkdirSync(folder, { recursive: true })
 
-    urls.forEach(async (url) => {
+    const promise = urls.map(async (url) => {
         const linkChecker = new LinkChecker()
 
         linkChecker.on('link', (result) => {
@@ -75,10 +77,12 @@ async function crawlerCheck(urls: Array<string>, concurrency = 100) {
             fs.appendFileSync(path, fullU8)
         })
 
-        await linkChecker.check({
+        return await linkChecker.check({
             path: url,
             concurrency: concurrency,
             recurse: true,
         })
     })
+
+    return { ...{ path: folder }, ...{ urls: await Promise.all(promise) } }
 }

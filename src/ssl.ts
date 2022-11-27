@@ -12,6 +12,9 @@ export async function runSSL() {
         throw new Error('Invalid mode (json | table)')
 
     const res = await sslCheck(conf.urls, conf.mode, conf.logging == 'true')
+
+    console.log('---')
+
     return conf.mode == 'json' ? console.log(res) : console.table(res)
 }
 
@@ -21,9 +24,9 @@ async function getConfig() {
     const fsRead = fs.readFileSync('./settings/ssl.conf', 'utf8')
     const urls = fsRead
         .split('\n')
+        .map((line) => line.trim())
         .filter((line) => line.length > 0)
         .filter((line) => !line.startsWith('#'))
-        .map((line) => line.trim())
         .map((line) => line.replace('https://', ''))
         .map((line) => (line.slice(-1) != '/' ? line : line.slice(0, -1)))
 
