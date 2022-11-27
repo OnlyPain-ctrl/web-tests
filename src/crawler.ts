@@ -62,7 +62,7 @@ async function crawlerCheck(
     const time =
         date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds()
 
-    const folder = './logs/crawl_' + day + '/time_' + time + '_unfinished/'
+    const folder = './logs/crawler/' + day + '/' + time + '_unfinished/'
 
     fs.mkdirSync(folder, { recursive: true })
 
