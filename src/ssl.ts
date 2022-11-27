@@ -1,5 +1,6 @@
 import fs from 'fs'
 import sslChecker from 'ssl-checker'
+import { askQuestion } from './libs/cli'
 
 /* exports */
 
@@ -77,14 +78,23 @@ async function sslCheck(
     const res = await Promise.all(promise)
 
     if (logging) {
-        /* TODO: valid json missing: '[]' */
-        const jsonRes = new Uint8Array(
-            Buffer.from(
-                JSON.stringify({ ...{ timestamp: new Date() }, ...res }) + ',\n'
-            )
-        )
         if (!fs.existsSync('logs')) fs.mkdirSync('logs')
-        fs.appendFileSync('./logs/ssl.json', jsonRes)
+
+        try {
+            const fsRead = fs.readFileSync('./logs/ssl.json', 'utf8')
+            const jsonData = JSON.parse(fsRead)
+            writeLog(jsonData)
+        } catch (error) {
+            const answer = await askQuestion(
+                '\nCurrent log file is empty / invalid. \nWould you like to create new one / override old one? \n(y/n) '
+            )
+            if (answer == 'y' || answer == 'Y') writeLog({})
+        }
+
+        function writeLog(data: { [key: string]: unknown }) {
+            data[new Date().toISOString()] = res
+            fs.writeFileSync('./logs/ssl.json', JSON.stringify(data), 'utf8')
+        }
     }
 
     if (mode == 'json') return res
