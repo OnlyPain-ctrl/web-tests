@@ -11,9 +11,12 @@ export async function runCrawler() {
         conf.fullLog == 'true'
     )
 
+    const newPath = res.path.replace('_unfinished', '')
+    fs.renameSync(res.path, newPath)
+
     console.log('---')
     console.log('urls checked: ' + res.urls.length)
-    console.log('log path: ' + res.path)
+    console.log('log path: ' + newPath)
 }
 
 /* helpers */
@@ -59,7 +62,7 @@ async function crawlerCheck(
     const time =
         date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds()
 
-    const folder = './logs/crawl_' + day + '/time_' + time + '/'
+    const folder = './logs/crawl_' + day + '/time_' + time + '_unfinished/'
 
     fs.mkdirSync(folder, { recursive: true })
 
