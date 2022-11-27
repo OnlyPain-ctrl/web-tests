@@ -5,7 +5,11 @@ import { LinkChecker } from 'linkinator'
 
 export async function runCrawler() {
     const conf = await getConfig()
-    const res = await crawlerCheck(conf.urls, conf.concurrency)
+    const res = await crawlerCheck(
+        conf.urls,
+        conf.concurrency,
+        conf.fullLog == 'true'
+    )
 
     console.log('---')
     console.log('urls checked: ' + res.urls.length)
@@ -31,13 +35,23 @@ async function getConfig() {
             .trim()
     )
 
+    const fullLog = fsRead
+        .split('\n')
+        .filter((line) => line.includes('FULL:'))[0]
+        .split(':')[1]
+        .trim()
+
     if (!concurrency)
         throw new Error('Invalid value for concurrency (1, 50, 100)')
 
-    return { urls, concurrency }
+    return { urls, concurrency, fullLog }
 }
 
-async function crawlerCheck(urls: Array<string>, concurrency = 100) {
+async function crawlerCheck(
+    urls: Array<string>,
+    concurrency = 100,
+    fullLog = false
+) {
     const date = new Date()
 
     const day =
@@ -74,7 +88,7 @@ async function crawlerCheck(urls: Array<string>, concurrency = 100) {
             const path = folder + '/' + name + '_[full]' + '.csv'
 
             fs.appendFileSync(statusPath, fullU8)
-            fs.appendFileSync(path, fullU8)
+            if (fullLog) fs.appendFileSync(path, fullU8)
         })
 
         return await linkChecker.check({
