@@ -98,6 +98,10 @@ async function crawlerCheck(
             path: url,
             concurrency: concurrency,
             recurse: true,
+            retry: true,
+            retryErrors: true,
+            retryErrorsCount: 3,
+            retryErrorsJitter: 5,
         })
     })
 
