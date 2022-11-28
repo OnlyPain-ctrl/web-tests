@@ -100,8 +100,8 @@ async function crawlerCheck(
             recurse: true,
             retry: true,
             retryErrors: true,
-            retryErrorsCount: 3,
-            retryErrorsJitter: 5,
+            retryErrorsCount: 2,
+            retryErrorsJitter: 2,
         })
     })
 
