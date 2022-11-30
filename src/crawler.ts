@@ -90,6 +90,10 @@ async function crawlerCheck(
             const statusPath = folder + '/' + name + '_[' + first + 'xx].csv'
             const path = folder + '/' + name + '_[full]' + '.csv'
 
+            if (result.status != 200) {
+                fs.appendFileSync(folder + '/_all_[' + first + 'xx].csv', fullU8)
+            }
+
             fs.appendFileSync(statusPath, fullU8)
             if (fullLog) fs.appendFileSync(path, fullU8)
         })
@@ -102,6 +106,7 @@ async function crawlerCheck(
             retryErrors: true,
             retryErrorsCount: 2,
             retryErrorsJitter: 2,
+            timeout: 60000 * 3,
         })
     })
 
