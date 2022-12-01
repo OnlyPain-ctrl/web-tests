@@ -12,7 +12,6 @@ export async function runOffline() {
         const whitelist = conf.whitelist[index]
 
         const date = new Date()
-
         const day =
             date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()
         const time =
@@ -73,9 +72,8 @@ async function runDwonload(
                     'Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 4 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19',
             },
         },
-        urlFilter: (url: string) => {
-            return whitelist.some((i: string) => url.includes(i))
-        },
+        urlFilter: (url: string) =>
+            whitelist.some((i: string) => url.includes(i)),
         recursive: true,
         requestConcurrency: concurrency,
         filenameGenerator: 'bySiteStructure',
