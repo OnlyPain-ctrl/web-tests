@@ -71,7 +71,7 @@ async function crawlerCheck(
             const statusPath = folder + '/' + name + '_[' + first + 'xx].csv'
             const path = folder + '/' + name + '_[full]' + '.csv'
 
-            if (result.status != 200) {
+            if (result.status != 200 && urls.length > 1) {
                 fs.appendFileSync(
                     folder + '/_all_[' + first + 'xx].csv',
                     fullU8
