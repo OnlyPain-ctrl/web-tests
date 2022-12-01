@@ -38,6 +38,7 @@ export const fileParseHelper = {
         return input
             .split('\n')
             .filter((line) => line.length > 0)
+            .filter((line) => !line.startsWith('_'))
             .filter((line) => !line.startsWith('#'))
             .map((line) => line.trim())
     },

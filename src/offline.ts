@@ -37,6 +37,7 @@ async function getConfig() {
             return line
                 .split('*')
                 .filter((line) => line.length > 0)
+                .filter((line) => !line.startsWith('_'))
                 .filter((line) => !line.startsWith('#'))
                 .map((line) => line.trim())
         })
