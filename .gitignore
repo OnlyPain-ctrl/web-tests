@@ -15,6 +15,7 @@ dist-ssr
 .env
 settings/*.conf
 !settings/examples/*
+_offline_version
 
 # Editor directories and files
 .vscode/*

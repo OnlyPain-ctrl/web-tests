@@ -1,5 +1,6 @@
 import { runSSL } from './src/ssl'
 import { runCrawler } from './src/crawler'
+import { runOffline } from './src/offline'
 
 switch (process.argv[2]) {
     case 'ssl':
@@ -7,6 +8,9 @@ switch (process.argv[2]) {
         break
     case 'crawl':
         runCrawler()
+        break
+    case 'offline':
+        runOffline()
         break
 
     default:
