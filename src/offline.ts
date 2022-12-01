@@ -1,5 +1,6 @@
 import fs from 'fs'
 import scrape from 'website-scraper'
+import { dateHelper, fileParseHelper } from './libs/configHelpers'
 
 /* exports */
 
@@ -11,11 +12,8 @@ export async function runOffline() {
 
         const whitelist = conf.whitelist[index]
 
-        const date = new Date()
-        const day =
-            date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()
-        const time =
-            date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds()
+        const day = dateHelper.dayString()
+        const time = dateHelper.timeString
 
         runDwonload(
             source,
@@ -43,12 +41,9 @@ async function getConfig() {
                 .map((line) => line.trim())
         })
 
-    const concurrency = parseInt(
-        fsRead
-            .split('\n')
-            .filter((line) => line.includes('CONCURRENCY:'))[0]
-            .split(':')[1]
-            .trim()
+    const concurrency = fileParseHelper.getSettingValueAsInt(
+        fsRead,
+        'concurrency'
     )
 
     const source = urls.map((ar) => ar[0])
