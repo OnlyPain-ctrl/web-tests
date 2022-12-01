@@ -16,6 +16,7 @@ dist-ssr
 settings/*.conf
 !settings/examples/*
 _offline_version
+_logs
 
 # Editor directories and files
 .vscode/*
