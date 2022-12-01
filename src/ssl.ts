@@ -1,6 +1,7 @@
 import fs from 'fs'
 import sslChecker from 'ssl-checker'
 import { askQuestion } from './libs/cli'
+import { dateHelper, fileParseHelper } from './libs/configHelpers'
 
 /* exports */
 
@@ -23,25 +24,13 @@ export async function runSSL() {
 
 async function getConfig() {
     const fsRead = fs.readFileSync('./settings/ssl.conf', 'utf8')
-    const urls = fsRead
-        .split('\n')
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0)
-        .filter((line) => !line.startsWith('#'))
+    const urls = fileParseHelper
+        .splitNewLineRmComments(fsRead)
         .map((line) => line.replace('https://', ''))
         .map((line) => (line.slice(-1) != '/' ? line : line.slice(0, -1)))
 
-    const mode = fsRead
-        .split('\n')
-        .filter((line) => line.includes('MODE:'))[0]
-        .split(':')[1]
-        .trim()
-
-    const logging = fsRead
-        .split('\n')
-        .filter((line) => line.includes('LOGGING:'))[0]
-        .split(':')[1]
-        .trim()
+    const mode = fileParseHelper.getSettingValue(fsRead, 'mode')
+    const logging = fileParseHelper.getSettingValue(fsRead, 'logging')
 
     return { urls, mode, logging }
 }
@@ -78,10 +67,10 @@ async function sslCheck(
     const res = await Promise.all(promise)
 
     if (logging) {
-        if (!fs.existsSync('logs')) fs.mkdirSync('logs')
+        if (!fs.existsSync('_logs')) fs.mkdirSync('_logs')
 
         try {
-            const fsRead = fs.readFileSync('./logs/ssl.json', 'utf8')
+            const fsRead = fs.readFileSync('./_logs/ssl.json', 'utf8')
             const jsonData = JSON.parse(fsRead)
             writeLog(jsonData)
         } catch (error) {
@@ -92,8 +81,8 @@ async function sslCheck(
         }
 
         function writeLog(data: { [key: string]: unknown }) {
-            data[new Date().toISOString()] = res
-            fs.writeFileSync('./logs/ssl.json', JSON.stringify(data), 'utf8')
+            data[dateHelper.timestampString()] = res
+            fs.writeFileSync('./_logs/ssl.json', JSON.stringify(data), 'utf8')
         }
     }
 

@@ -18,6 +18,9 @@ export const dateHelper = {
             this.newDate.getSeconds()
         )
     },
+    timestampString: function () {
+        return this.newDate.toISOString()
+    },
 }
 
 export const fileParseHelper = {
