@@ -9,7 +9,8 @@ export async function runCrawler() {
     const res = await crawlerCheck(
         conf.urls,
         conf.concurrency,
-        conf.fullLog == 'true'
+        conf.fullLog == 'true',
+        conf.timeout
     )
 
     const newPath = res.path.replace('_unfinished', '')
@@ -32,18 +33,21 @@ async function getConfig() {
         'concurrency'
     )
 
+    const timeout = fileParseHelper.getSettingValueAsInt(fsRead, 'timeout')
+
     const fullLog = fileParseHelper.getSettingValue(fsRead, 'full')
 
     if (!concurrency)
         throw new Error('Invalid value for concurrency (1, 50, 100)')
 
-    return { urls, concurrency, fullLog }
+    return { urls, concurrency, fullLog, timeout }
 }
 
 async function crawlerCheck(
     urls: Array<string>,
     concurrency = 100,
-    fullLog = false
+    fullLog = false,
+    timeout: number
 ) {
     const day = dateHelper.dayString()
     const time = dateHelper.timeString()
@@ -90,7 +94,7 @@ async function crawlerCheck(
             retryErrors: true,
             retryErrorsCount: 2,
             retryErrorsJitter: 2,
-            timeout: 60000 * 3,
+            timeout: 60000 * timeout,
         })
     })
 
