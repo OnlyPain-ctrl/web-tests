@@ -2,6 +2,8 @@ import { runSSL } from './src/ssl'
 import { runCrawler } from './src/crawler'
 import { runOffline } from './src/offline'
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+
 switch (process.argv[2]) {
     case 'ssl':
         runSSL()
