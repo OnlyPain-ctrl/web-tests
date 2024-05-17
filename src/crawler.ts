@@ -156,9 +156,6 @@ async function crawlerCheck(
                     })
                 }
 
-                console.log(skipExternal)
-                console.log(skipFiles)
-
                 return skip
             },
         })
