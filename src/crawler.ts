@@ -10,7 +10,9 @@ export async function runCrawler() {
         conf.urls,
         conf.concurrency,
         conf.fullLog == 'true',
-        conf.timeout
+        conf.timeout,
+        conf.skipExternal == 'true',
+        conf.skipFiles == 'true'
     )
 
     const newPath = res.path.replace('_unfinished', '')
@@ -37,17 +39,23 @@ async function getConfig() {
 
     const fullLog = fileParseHelper.getSettingValue(fsRead, 'full')
 
+    const skipExternal = fileParseHelper.getSettingValue(fsRead, 'skipExternal')
+
+    const skipFiles = fileParseHelper.getSettingValue(fsRead, 'skipFiles')
+
     if (!concurrency)
         throw new Error('Invalid value for concurrency (1, 50, 100)')
 
-    return { urls, concurrency, fullLog, timeout }
+    return { urls, concurrency, fullLog, timeout, skipExternal, skipFiles }
 }
 
 async function crawlerCheck(
     urls: Array<string>,
     concurrency = 100,
     fullLog = false,
-    timeout: number
+    timeout: number,
+    skipExternal: boolean,
+    skipFiles: boolean
 ) {
     const day = dateHelper.dayString()
     const time = dateHelper.timeString()
@@ -95,6 +103,64 @@ async function crawlerCheck(
             retryErrorsCount: 2,
             retryErrorsJitter: 2,
             timeout: 60000 * timeout,
+            linksToSkip: async (link) => {
+                const skipIfContainer = [
+                    '.jpeg',
+                    '.jpg',
+                    '.png',
+                    '.gif',
+                    '.svg',
+                    '.webp',
+                    '.pdf',
+                    '.doc',
+                    '.docx',
+                    '.xls',
+                    '.xlsx',
+                    '.ppt',
+                    '.pptx',
+                    '.txt',
+                    '.md',
+                    '.mp4',
+                    '.webm',
+                    '.avi',
+                    '.mov',
+                    '.flv',
+                    '.mp3',
+                    '.wav',
+                    '.ogg',
+                    '.aac',
+                    '.css',
+                    '.js',
+                    '.json',
+                    '.xml',
+                    '.zip',
+                    '.rar',
+                    '.tar',
+                    '.gz',
+                    '.ttf',
+                    '.otf',
+                    '.woff',
+                    '.woff2',
+                    '.ico',
+                ]
+
+                let skip = false
+
+                if (skipExternal) {
+                    if (!link.includes(url)) skip = true
+                }
+
+                if (skipFiles) {
+                    skipIfContainer.forEach((container) => {
+                        if (link.includes(container)) skip = true
+                    })
+                }
+
+                console.log(skipExternal)
+                console.log(skipFiles)
+
+                return skip
+            },
         })
     })
 
